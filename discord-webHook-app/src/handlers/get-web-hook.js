@@ -1,8 +1,7 @@
 const Discord = require("discord.js")
 
 exports.lambdaHandler = async (event, context) => {
-    const eventLog = JSON.parse(event.body)
-    if(!eventLog.hook.active){
+    if(!event){
         return {
             "statusCode" : 400,
             "body" : 'Bad Request'
@@ -11,10 +10,13 @@ exports.lambdaHandler = async (event, context) => {
     else{
         const webhook = new Discord.WebhookClient(process.env.DISCORD_HOOK_CHANNEL_ID, `${process.env.DISCORD_HOOK_CHANNEL_TOKEN}`)
         try {
-            const response = await webhook.send("홍정민 봇 한글 테스트")
+            const data = await webhook.send(`${process.env.MY_NAME} ${process.env.SEND_TEXT}`, {
+                files: [`${process.env.HOOK_IMAGE_URL}`]
+            })
+            console.log("Log :",data)
             return { "statusCode": 200 }
         } catch(err) {
-            console.log(err)
+            console.log("Error Log :", err)
             return {
                 "statusCode": 500,
                 "body" : "internal error"
